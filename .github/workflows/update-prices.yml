@@ -1,0 +1,27 @@
+name: Update stock prices
+
+on:
+  workflow_dispatch:        # lets you run it manually with a button
+  schedule:
+    - cron: "*/15 7-21 * * 1-5"   # every 15 min, ~market hours (UTC), Mon-Fri
+
+permissions:
+  contents: write           # allows the action to commit prices.json
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Fetch prices
+        run: python fetch_prices.py
+      - name: Commit prices.json
+        run: |
+          git config user.name  "price-bot"
+          git config user.email "price-bot@users.noreply.github.com"
+          git add prices.json
+          git commit -m "update prices" || echo "no changes"
+          git push
