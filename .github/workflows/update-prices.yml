@@ -1,12 +1,16 @@
 name: Update stock prices
 
 on:
-  workflow_dispatch:        # lets you run it manually with a button
+  workflow_dispatch:
   schedule:
     - cron: "*/5 7-21 * * 1-5"   # every 5 min, ~market hours (UTC), Mon-Fri
 
 permissions:
-  contents: write           # allows the action to commit prices.json
+  contents: write
+
+concurrency:                  # never let two runs overlap (prevents push conflicts)
+  group: update-prices
+  cancel-in-progress: false
 
 jobs:
   update:
@@ -23,5 +27,6 @@ jobs:
           git config user.name  "price-bot"
           git config user.email "price-bot@users.noreply.github.com"
           git add prices.json
-          git commit -m "update prices" || echo "no changes"
+          git commit -m "update prices" || { echo "no changes"; exit 0; }
+          git pull --rebase --autostash origin main
           git push
