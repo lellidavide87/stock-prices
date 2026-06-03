@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
-"""Fetches live quotes from Yahoo Finance (server-side, no key needed) and writes prices.json.
-Run automatically by GitHub Actions. Contains ONLY ticker symbols - no portfolio data."""
+"""Fetches live quotes + FX from Yahoo (server-side, no key) -> prices.json. Only tickers, no portfolio data."""
 import json, time, urllib.request
-
-# dashboard ticker -> Yahoo symbol
 SYMBOLS = {
     "META": "META",
     "GOOGL": "GOOGL",
@@ -54,32 +51,197 @@ SYMBOLS = {
     "CI2": "FLXI.DE",
     "CPH": "CPH.TO",
     "CSBGE7": "CSBGE7.MI",
-    "LEMA": "LEMA.MI"
+    "LEMA": "LEMA.MI",
+    "MMM": "MMM",
+    "ABBV": "ABBV",
+    "ACN": "ACN",
+    "ACOMO": "ACOMO",
+    "ADBE": "ADBE",
+    "AD": "AD",
+    "ABNB": "ABNB",
+    "BABA": "BABA",
+    "AMD": "AMD",
+    "AASI": "AASI",
+    "AAPL": "AAPL",
+    "APP": "APP",
+    "ADM": "ADM",
+    "ARM": "ARM",
+    "ASML": "ASML",
+    "1ASML": "1ASML",
+    "B": "B",
+    "BRK.B": "BRK.B",
+    "BLCO": "BLCO",
+    "BHP": "BHP",
+    "RX": "RX",
+    "BA": "BA",
+    "BKNG": "BKNG",
+    "AVGO": "AVGO",
+    "BAM": "BAM",
+    "BN": "BN",
+    "BC": "BC",
+    "BZZUY": "BZZUY",
+    "BYDDY": "BYDDY",
+    "CPR": "CPR",
+    "CAP": "CAP",
+    "CPRI": "CPRI",
+    "1afx": "1afx",
+    "CAVA": "CAVA",
+    "CELH": "CELH",
+    "0001": "0001",
+    "CLSK": "CLSK",
+    "NET": "NET",
+    "KO": "KO",
+    "CL": "CL",
+    "CFRUY": "CFRUY",
+    "CSU": "CSU",
+    "CPRT": "CPRT",
+    "CRWV": "CRWV",
+    "CPNG": "CPNG",
+    "CROX": "CROX",
+    "CRWD": "CRWD",
+    "DJCO": "DJCO",
+    "QTUM": "QTUM",
+    "DEO": "DEO",
+    "DLO": "DLO",
+    "DUOL": "DUOL",
+    "EDEN": "EDEN",
+    "ESL": "ESL",
+    "SX5E": "SX5E",
+    "ERFSF": "ERFSF",
+    "FIh.u": "FIh.u",
+    "FMX": "FMX",
+    "RACE": "RACE",
+    "FBK": "FBK",
+    "FVRR": "FVRR",
+    "O3I": "O3I",
+    "FMC": "FMC",
+    "FTNT": "FTNT",
+    "GRAB": "GRAB",
+    "HIMS": "HIMS",
+    "IDEXY": "IDEXY",
+    "INFY": "INFY",
+    "INTC": "INTC",
+    "IWB": "IWB",
+    "JDSPY": "JDSPY",
+    "JD": "JD",
+    "JEDI": "JEDI",
+    "JNJ": "JNJ",
+    "JMIA": "JMIA",
+    "K": "K",
+    "KER": "KER",
+    "2222.0": "2222.0",
+    "KWEB": "KWEB",
+    "LMND": "LMND",
+    "LDO": "LDO",
+    "LVMHF": "LVMHF",
+    "MOH": "MOH",
+    "LYFT": "LYFT",
+    "AMKBY": "AMKBY",
+    "MKL": "MKL",
+    "MAR": "MAR",
+    "MASI": "MASI",
+    "MCD": "MCD",
+    "Meli": "Meli",
+    "MONC": "MONC",
+    "MNDY": "MNDY",
+    "NDX": "NDX",
+    "NESN": "NESN",
+    "NEM": "NEM",
+    "NEXI": "NEXI",
+    "NTDOY": "NTDOY",
+    "NVO": "NVO",
+    "NTNX": "NTNX",
+    "NVR": "NVR",
+    "OKLO": "OKLO",
+    "OKTA": "OKTA",
+    "ORCL": "ORCL",
+    "ORSTED": "ORSTED",
+    "OSCR": "OSCR",
+    "PLTR": "PLTR",
+    "2PP": "2PP",
+    "PEP": "PEP",
+    "PSH": "PSH",
+    "PFE": "PFE",
+    "PQ": "PQ",
+    "PG": "PG",
+    "PRX": "PRX",
+    "PUBM": "PUBM",
+    "RL": "RL",
+    "RELY": "RELY",
+    "REY.MI": "REY.MI",
+    "RIO": "RIO",
+    "RKLB": "RKLB",
+    "RBSFY": "RBSFY",
+    "RYAAY": "RYAAY",
+    "VOO": "VOO",
+    ".INX": ".INX",
+    "CRM": "CRM",
+    "IOT": "IOT",
+    "SMTI": "SMTI",
+    "SAP": "SAP",
+    "SES": "SES",
+    "SMH": "SMH",
+    "NOW": "NOW",
+    "SHOP": "SHOP",
+    "SIE": "SIE",
+    "SNOW": "SNOW",
+    "SBUX": "SBUX",
+    "STLAM": "STLAM",
+    "STNE": "STNE",
+    "SG": "SG",
+    "TROW": "TROW",
+    "TSM": "TSM",
+    "TPR": "TPR",
+    "TGT": "TGT",
+    "TDOC": "TDOC",
+    "TCEHY": "TCEHY",
+    "TSLA": "TSLA",
+    "HEAL": "HEAL",
+    "TTD": "TTD",
+    "PATH": "PATH",
+    "ULTA": "ULTA",
+    "UA": "UA",
+    "UNH": "UNH",
+    "GDX": "GDX",
+    "QNTM": "QNTM",
+    "VUAA": "VUAA",
+    "VEEV": "VEEV",
+    "V": "V",
+    "VISA": "VISA",
+    "VST": "VST",
+    "VOW3": "VOW3",
+    "WBD": "WBD",
+    "WM": "WM",
+    "XOVR": "XOVR",
+    "ZM": "ZM",
+    "IFX": "IFX.DE",
+    "SAN": "SAN.PA",
+    "ALV": "ALV.DE",
+    "HDB": "HDB",
+    "SU": "SU.PA",
+    "RHM": "RHM.DE",
+    "AEM": "AEM",
+    "8058.T": "8058.T",
+    "AZN": "AZN",
+    "CCJ": "CCJ",
+    "EURUSD": "EURUSD=X",
+    "EURJPY": "EURJPY=X",
+    "EURCAD": "EURCAD=X"
 }
-
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; price-bot/1.0)"}
-
 def quote(ysym):
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ysym}?interval=1d&range=1d"
-    req = urllib.request.Request(url, headers=HEADERS)
-    with urllib.request.urlopen(req, timeout=15) as r:
+    with urllib.request.urlopen(urllib.request.Request(url, headers=HEADERS), timeout=15) as r:
         j = json.load(r)
     m = j["chart"]["result"][0]["meta"]
-    p = m.get("regularMarketPrice")
-    pc = m.get("chartPreviousClose") or m.get("previousClose")
-    if not p or not pc:
-        raise ValueError("no price")
-    return {"p": round(p, 4), "d": round((p/pc - 1)*100, 2)}
-
+    p = m.get("regularMarketPrice"); pc = m.get("chartPreviousClose") or m.get("previousClose")
+    if not p or not pc: raise ValueError("no price")
+    return {"p": round(p,4), "d": round((p/pc-1)*100,2)}
 out = {}
 for ticker, ysym in SYMBOLS.items():
-    try:
-        out[ticker] = quote(ysym)
-    except Exception as e:
-        print(f"skip {ticker} ({ysym}): {e}")
-    time.sleep(0.3)  # be gentle
-
+    try: out[ticker] = quote(ysym)
+    except Exception: pass
+    time.sleep(0.25)
 out["_updated"] = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
-with open("prices.json", "w") as f:
-    json.dump(out, f, indent=0)
-print(f"wrote prices.json with {len(out)-1} quotes")
+json.dump(out, open("prices.json","w"), indent=0)
+print(f"wrote prices.json with {len(out)-1} quotes / {len(SYMBOLS)} symbols")
