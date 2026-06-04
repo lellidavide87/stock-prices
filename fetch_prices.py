@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Fetches live quotes + FX from Yahoo (server-side, no key) -> prices.json. Only tickers, no portfolio data."""
+"""Fetch live quotes + FX from Yahoo (server-side, no key) -> prices.json. Only tickers, no portfolio data.
+Simple/robust: prices + daily change + FX. (Earnings fetching removed to keep the Action reliable.)"""
 import json, time, urllib.request
 SYMBOLS = {
     "META": "META",
@@ -226,14 +227,18 @@ SYMBOLS = {
     "CCJ": "CCJ",
     "EURUSD": "EURUSD=X",
     "EURJPY": "EURJPY=X",
-    "EURCAD": "EURCAD=X"
+    "EURCAD": "EURCAD=X",
+    "APLD": "APLD",
+    "IREN": "IREN",
+    "MRVL": "MRVL",
+    "MU": "MU",
+    "SOFI": "SOFI"
 }
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; price-bot/1.0)"}
 def quote(ysym):
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ysym}?interval=1d&range=1d"
     with urllib.request.urlopen(urllib.request.Request(url, headers=HEADERS), timeout=15) as r:
-        j = json.load(r)
-    m = j["chart"]["result"][0]["meta"]
+        m = json.load(r)["chart"]["result"][0]["meta"]
     p = m.get("regularMarketPrice"); pc = m.get("chartPreviousClose") or m.get("previousClose")
     if not p or not pc: raise ValueError("no price")
     return {"p": round(p,4), "d": round((p/pc-1)*100,2)}
