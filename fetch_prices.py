@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch live quotes + FX from Yahoo (server-side, no key) -> prices.json. Only tickers, no portfolio data.
-Simple/robust: prices + daily change + FX. (Earnings fetching removed to keep the Action reliable.)"""
+"""Quotes + FX from Yahoo (server-side, no key) -> prices.json. Only tickers, no portfolio data."""
 import json, time, urllib.request
 SYMBOLS = {
     "META": "META",
@@ -232,7 +231,13 @@ SYMBOLS = {
     "IREN": "IREN",
     "MRVL": "MRVL",
     "MU": "MU",
-    "SOFI": "SOFI"
+    "SOFI": "SOFI",
+    "STM": "STM",
+    "REC": "REC.MI",
+    "MUV2": "MUV2.DE",
+    "IBN": "IBN",
+    "IBE": "IBE.MC",
+    "GEV": "GEV"
 }
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; price-bot/1.0)"}
 def quote(ysym):
