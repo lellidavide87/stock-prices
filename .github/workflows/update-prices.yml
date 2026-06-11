@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  actions: write               # needed so the keep-alive step can re-arm the schedule
 
 concurrency:
   group: update-prices
@@ -51,11 +50,3 @@ jobs:
             echo "push race, retry $i"; sleep $((RANDOM % 6 + 3))
           done
           echo "could not push this run; next run will catch up"; exit 0
-
-      # Stops GitHub from auto-disabling the schedule after 60 days of
-      # bot-only activity. Runs every time; only acts when the repo is
-      # close to the 60-day inactivity limit.
-      - name: Keep workflow alive (stop the 60-day auto-pause)
-        uses: gautamkrishnar/keepalive-workflow@v2
-        with:
-          use_api: true
