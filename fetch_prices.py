@@ -244,19 +244,51 @@ SYMBOLS = {
     "IBE": "IBE.MC",
     "GEV": "GEV"
 }
-HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; price-bot/1.0)"}
-def quote(ysym):
-    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{ysym}?interval=1d&range=1d"
-    with urllib.request.urlopen(urllib.request.Request(url, headers=HEADERS), timeout=15) as r:
+HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                         "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+           "Accept": "application/json,text/plain,*/*"}
+HOSTS = ["https://query1.finance.yahoo.com", "https://query2.finance.yahoo.com"]
+
+# Shared session WITH a cookie. Yahoo rejects the first cookie-less requests with
+# 401, which used to silently kill the first few symbols (VRT, PRY, META...).
+opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor())
+for _ in range(2):
+    try:
+        opener.open(urllib.request.Request("https://finance.yahoo.com",
+                    headers=HEADERS), timeout=15).read(1); break
+    except Exception:
+        time.sleep(1)
+
+def _fetch(ysym, host):
+    url = f"{host}/v8/finance/chart/{ysym}?interval=1d&range=1d"
+    with opener.open(urllib.request.Request(url, headers=HEADERS), timeout=15) as r:
         m = json.load(r)["chart"]["result"][0]["meta"]
     p = m.get("regularMarketPrice"); pc = m.get("chartPreviousClose") or m.get("previousClose")
     if not p or not pc: raise ValueError("no price")
-    return {"p": round(p,4), "d": round((p/pc-1)*100,2)}
-out = {}
+    return {"p": round(p, 4), "d": round((p/pc-1)*100, 2)}
+
+def quote(ysym):
+    last = None
+    for attempt in range(3):                       # retry across both Yahoo hosts
+        try:
+            return _fetch(ysym, HOSTS[attempt % len(HOSTS)])
+        except Exception as e:
+            last = e; time.sleep(0.6 * (attempt + 1))
+    raise last
+
+# Carry forward the previous good value if a symbol fails -> it never drops to a stale book price.
+try: prev = json.load(open("prices.json"))
+except Exception: prev = {}
+
+out = {}; fail = []
 for ticker, ysym in SYMBOLS.items():
-    try: out[ticker] = quote(ysym)
-    except Exception: pass
-    time.sleep(0.25)
+    try:
+        out[ticker] = quote(ysym)
+    except Exception:
+        fail.append(ticker)
+        if isinstance(prev.get(ticker), dict): out[ticker] = prev[ticker]
+    time.sleep(0.3)
+
 out["_updated"] = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
-json.dump(out, open("prices.json","w"), indent=0)
-print(f"wrote prices.json with {len(out)-1} quotes / {len(SYMBOLS)} symbols")
+json.dump(out, open("prices.json", "w"), indent=0)
+print(f"wrote prices.json: {len(out)-1} symbols, {len(fail)} failed -> {fail[:25]}")
