@@ -259,4 +259,4 @@ for ticker, ysym in SYMBOLS.items():
     time.sleep(0.25)
 out["_updated"] = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
 json.dump(out, open("prices.json","w"), indent=0)
-print(f"wrote prices.json with {len(out)-1} quotes / {len(SY
+print(f"wrote prices.json with {len(out)-1} quotes / {len(SYMBOLS)} symbols")
