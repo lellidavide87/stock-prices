@@ -2,6 +2,8 @@
 """Quotes + FX from Yahoo (server-side, no key) -> prices.json. Only tickers, no portfolio data."""
 import json, time, urllib.request
 SYMBOLS = {
+    "VRT": "VRT",
+    "PRY": "PRY.MI",
     "META": "META",
     "GOOGL": "GOOGL",
     "NFLX": "NFLX",
@@ -227,6 +229,9 @@ SYMBOLS = {
     "EURUSD": "EURUSD=X",
     "EURJPY": "EURJPY=X",
     "EURCAD": "EURCAD=X",
+    "EURGBP": "EURGBP=X",
+    "EURCHF": "EURCHF=X",
+    "EURSEK": "EURSEK=X",
     "APLD": "APLD",
     "IREN": "IREN",
     "MRVL": "MRVL",
@@ -254,4 +259,4 @@ for ticker, ysym in SYMBOLS.items():
     time.sleep(0.25)
 out["_updated"] = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
 json.dump(out, open("prices.json","w"), indent=0)
-print(f"wrote prices.json with {len(out)-1} quotes / {len(SYMBOLS)} symbols")
+print(f"wrote prices.json with {len(out)-1} quotes / {len(SY
