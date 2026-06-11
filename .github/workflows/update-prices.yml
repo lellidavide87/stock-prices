@@ -1,16 +1,17 @@
 name: Update stock prices
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:           # lets you run it by hand any time
   schedule:
-    - cron: "*/5 7-21 * * 1-5"
+    - cron: "*/10 7-21 * * 1-5" # every 10 min, 07:00-21:00 UTC, Mon-Fri (EU open -> US close)
 
 permissions:
   contents: write
+  actions: write               # needed so the keep-alive step can re-arm the schedule
 
 concurrency:
   group: update-prices
-  cancel-in-progress: false
+  cancel-in-progress: false    # queue runs instead of clashing -> no push races
 
 jobs:
   update:
@@ -19,12 +20,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Fetch prices
         run: python fetch_prices.py
-      - name: Commit prices.json
+
+      - name: Commit prices.json (with retry)
         shell: bash
         run: |
           set +e
@@ -36,18 +40,22 @@ jobs:
             git fetch origin main
             git rebase origin/main
             if [ $? -ne 0 ]; then
-              # both runs edited prices.json -> keep OUR version on top of remote
               git rebase --abort
               git reset --soft origin/main
               git add prices.json
               git commit -m "update prices"
             fi
             if git push origin HEAD:main; then
-              echo "pushed successfully"
-              exit 0
+              echo "pushed on attempt $i"; exit 0
             fi
-            echo "push race, retry $i"
-            sleep $((RANDOM % 6 + 3))
+            echo "push race, retry $i"; sleep $((RANDOM % 6 + 3))
           done
-          echo "could not push this run; next run will catch up"
-          exit 0
+          echo "could not push this run; next run will catch up"; exit 0
+
+      # Stops GitHub from auto-disabling the schedule after 60 days of
+      # bot-only activity. Runs every time; only acts when the repo is
+      # close to the 60-day inactivity limit.
+      - name: Keep workflow alive (stop the 60-day auto-pause)
+        uses: gautamkrishnar/keepalive-workflow@v2
+        with:
+          use_api: true
