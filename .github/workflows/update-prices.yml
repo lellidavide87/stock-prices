@@ -24,6 +24,11 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Keepalive — prevent GitHub 60-day auto-pause
+        run: gh api -X PUT repos/${{ github.repository }}/actions/workflows/update-prices.yml/enable
+        env:
+          GH_TOKEN: ${{ github.token }}
+        continue-on-error: true
       - name: Fetch prices
         run: python fetch_prices.py
 
