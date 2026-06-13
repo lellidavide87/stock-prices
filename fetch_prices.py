@@ -249,6 +249,13 @@ SYMBOLS = {
     "IBE": "IBE.MC",
     "GEV": "GEV"
 }
+INDICES = {
+    "IDX_SPX": "%5EGSPC",
+    "IDX_NDX": "%5ENDX",
+    "IDX_HSI": "%5EHSI",
+    "IDX_NIFTY": "%5ENSEI",
+    "IDX_BTC": "BTC-USD",
+}
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                          "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
            "Accept": "application/json,text/plain,*/*"}
@@ -281,11 +288,38 @@ def quote(ysym):
             last = e; time.sleep(0.6 * (attempt + 1))
     raise last
 
+def _fetch_idx(ysym, host):
+    url = f"{host}/v8/finance/chart/{ysym}?interval=1d&range=1y"
+    with opener.open(urllib.request.Request(url, headers=HEADERS), timeout=20) as r:
+        res = json.load(r)["chart"]["result"][0]
+    m = res["meta"]
+    p = m.get("regularMarketPrice"); pc = m.get("chartPreviousClose") or m.get("previousClose")
+    closes = [c for c in (res.get("indicators", {}).get("quote", [{}])[0].get("close") or []) if c]
+    top = max(closes + ([p] if p else []))
+    if not p or not pc or not top: raise ValueError("no idx data")
+    return {"p": round(p, 4), "d": round((p/pc-1)*100, 2), "t": round(top, 4)}
+
+def quote_idx(ysym):
+    last = None
+    for attempt in range(3):
+        try:
+            return _fetch_idx(ysym, HOSTS[attempt % len(HOSTS)])
+        except Exception as e:
+            last = e; time.sleep(0.6 * (attempt + 1))
+    raise last
+
 # Carry forward the previous good value if a symbol fails -> it never drops to a stale book price.
 try: prev = json.load(open("prices.json"))
 except Exception: prev = {}
 
 out = {}; fail = []
+for ticker, ysym in INDICES.items():
+    try:
+        out[ticker] = quote_idx(ysym)
+    except Exception:
+        fail.append(ticker)
+        if isinstance(prev.get(ticker), dict): out[ticker] = prev[ticker]
+    time.sleep(0.3)
 for ticker, ysym in SYMBOLS.items():
     try:
         out[ticker] = quote(ysym)
