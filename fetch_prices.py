@@ -301,7 +301,7 @@ def _fetch_idx(ysym, host):
     # real previous close from the daily closes series instead.
     pc = None
     if len(closes) >= 2:
-        pc = closes[-2] if (p and abs(closes[-1] - p) < 1e-6) else closes[-1]
+        pc = closes[-2] if (p and abs(round(closes[-1], 4) - p) < 1e-6) else closes[-1]
     if pc is None:
         pc = m.get("chartPreviousClose") or m.get("previousClose")
     if not p or not pc or not top: raise ValueError("no idx data")
