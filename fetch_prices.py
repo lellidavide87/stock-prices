@@ -293,9 +293,17 @@ def _fetch_idx(ysym, host):
     with opener.open(urllib.request.Request(url, headers=HEADERS), timeout=20) as r:
         res = json.load(r)["chart"]["result"][0]
     m = res["meta"]
-    p = m.get("regularMarketPrice"); pc = m.get("chartPreviousClose") or m.get("previousClose")
+    p = m.get("regularMarketPrice")
     closes = [c for c in (res.get("indicators", {}).get("quote", [{}])[0].get("close") or []) if c]
     top = max(closes + ([p] if p else []))
+    # chartPreviousClose on a 1y-range chart is the close from ~1yr ago, NOT yesterday's
+    # close -> using it for the daily % gives nonsense (e.g. "+23%" days). Derive the
+    # real previous close from the daily closes series instead.
+    pc = None
+    if len(closes) >= 2:
+        pc = closes[-2] if (p and abs(closes[-1] - p) < 1e-6) else closes[-1]
+    if pc is None:
+        pc = m.get("chartPreviousClose") or m.get("previousClose")
     if not p or not pc or not top: raise ValueError("no idx data")
     return {"p": round(p, 4), "d": round((p/pc-1)*100, 2), "t": round(top, 4)}
 
