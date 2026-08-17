@@ -3,6 +3,15 @@
 import json, time, urllib.request
 SYMBOLS = {
     "VRT": "VRT",
+    "FLOW": "FLOW.AS",
+    "LIN": "LIN",
+    "FNV": "FNV",
+    "CNQ": "CNQ.TO",
+    "HHH": "HHH",
+    "INTU": "INTU",
+    "SPGI": "SPGI",
+    "ROP": "ROP",
+    "MCO": "MCO",
     "PRY": "PRY.MI",
     "META": "META",
     "GOOGL": "GOOGL",
