@@ -259,7 +259,22 @@ SYMBOLS = {
     "MUV2": "MUV2.DE",
     "IBN": "IBN",
     "IBE": "IBE.MC",
-    "GEV": "GEV"
+    "GEV": "GEV",
+    # --- added 21 Aug 2026: eleven board tickers with NO live price. The last three are OVERRIDES -
+    # a later key wins in a dict literal - fixing bare tickers that resolved to nothing for weeks:
+    # ACOMO -> ACOMO.AS (Amsterdam), CSU -> CSU.TO (Toronto), VISA -> V. Standing rule: any non-US
+    # listing MUST carry its suffix or it silently grabs a US namesake, or nothing at all.
+    "8766": "8766.T",
+    "KSPI": "KSPI",
+    "LBTYA": "LBTYA",
+    "MDLZ": "MDLZ",
+    "NXPI": "NXPI",
+    "SPCX": "SPCX",
+    "XOM": "XOM",
+    "YSN": "YSN.DE",
+    "ACOMO": "ACOMO.AS",
+    "CSU": "CSU.TO",
+    "VISA": "V"
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
