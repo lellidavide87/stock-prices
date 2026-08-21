@@ -282,6 +282,14 @@ INDICES = {
     "IDX_HSI": "%5EHSI",
     "IDX_NIFTY": "%5ENSEI",
     "IDX_BTC": "BTC-USD",
+    # added 21 Aug 2026. Both tiles ALREADY render on the dashboard (IDXMETA) but were absent here,
+    # so they ran on frozen idxSnap fallbacks - SMH showed 568.92 against a real 562.65 and LEMA
+    # 72.60 against 74.29. Close enough to look right, which is why it went unnoticed.
+    # IDX_ISAC is DELIBERATELY NOT ADDED: it was retired from the dashboard because ISAC.L is the
+    # LONDON USD line, and its FX-driven swings do not reflect the EUR holding. Same reason
+    # IDX_LEMA uses LEMA.MI (EUR/Milan = the line actually held), not a USD listing.
+    "IDX_SMH": "SMH",
+    "IDX_LEMA": "LEMA.MI",
 }
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                          "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
