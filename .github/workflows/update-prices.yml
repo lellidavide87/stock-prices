@@ -3,7 +3,14 @@ name: Update stock prices
 on:
   workflow_dispatch:
   schedule:
-    - cron: "7 7-21 * * 1-5"   # hourly trigger (reliable) - job loops internally every ~6 min
+    # CRON FIXED 10 Sep 2026. The single hourly entry at minute :07 was being DROPPED by GitHub:
+    # on 10 Sep it produced ONE burst all day (12:12-13:00 UTC) against ~15 scheduled triggers, and
+    # THE LAST PUBLISH WAS 30 MINUTES BEFORE THE US OPEN AT 13:30 - so every US name on the dashboard
+    # showed yesterday's close for the whole session. Actions cron is BEST-EFFORT and minute :07 sits
+    # in the most congested window on the platform. Two offset entries now, neither near the hour, so
+    # one dropped trigger is no longer a lost hour.
+    - cron: "23 7-21 * * 1-5"    # off-peak minute, full trading day (Europe + US)
+    - cron: "53 12-20 * * 1-5"   # second chance across the US session, offset by 30 minutes
 
 permissions:
   contents: write
@@ -11,7 +18,11 @@ permissions:
 
 concurrency:
   group: update-prices
-  cancel-in-progress: true     # a fresh hourly run supersedes a stale one
+  cancel-in-progress: false    # CHANGED 10 Sep 2026 - NOT COSMETIC. With two triggers an hour, TRUE
+                               # would let the :53 run KILL a healthy :23 burst mid-flight and coverage
+                               # would get WORSE, not better. FALSE queues the second run behind the
+                               # first so bursts chain back to back. The loop already rebases onto
+                               # origin/main, so a queued run picks up cleanly.
 
 jobs:
   update:
