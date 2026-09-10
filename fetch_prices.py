@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
-"""Quotes + FX from Yahoo (server-side, no key) -> prices.json. Only tickers, no portfolio data."""
+"""Quotes + FX from Yahoo (server-side, no key) -> prices.json. Only tickers, no portfolio data.
+
+READY TO COMMIT to lellidavide87/stock-prices - prepared 31 Aug 2026.
+
+The GitHub Action runs the REPO copy of this file, not the local one, so local fixes never reach
+the dashboard. The repo copy is missing 14 symbols outright and carries 24 BARE tickers that
+silently resolve to a US namesake or to nothing - which is why 55 board rows never update and 25
+of those sit in ACT and BEST OPPORTUNITY with a frozen price, including the NESTLE, SIEMENS and
+ESSILORLUXOTTICA holdings.
+
+ADDED (14): 005380, 8058, 8766, AKRBP, BMY, ENR, GLOB, KWBE, MBG.DE, MOS, NTR, NXPI, TPW, WBD.MI
+SUFFIXED (24): NESN->NESN.SW, SIE->SIE.DE, ESL->EL.PA, LDO->LDO.MI, PQ->PQ.MI, PRX->PRX.AS,
+  KER->KER.PA, MONC->MONC.MI, CPR->CPR.MI, NEXI->NEXI.MI, CAP->CAP.PA, 0001->0001.HK, RX->RX.V,
+  SES->SES.TO, IWB->IWB.MI, ORSTED->ORSTED.CO, STLAM->STLAM.MI, VOW3->VOW3.DE, VUAA->VUAA.MI,
+  1afx->AFX.DE, ACOMO->ACOMO.AS, CSU->CSU.TO, VISA->V, 2222.0->2222.T
+UNMAPPED rather than guessed: EDEN, CI2, QNTM, FBK - each returned a price 0.04x-4.9x the stored
+  one, so the ticker is the wrong instrument and needs identifying first.
+"""
 import json, time, urllib.request
 SYMBOLS = {
     "VRT": "VRT",
-    "FLOW": "FLOW.AS",
-    "LIN": "LIN",
-    "FNV": "FNV",
-    "CNQ": "CNQ.TO",
-    "HHH": "HHH",
-    "INTU": "INTU",
-    "SPGI": "SPGI",
-    "ROP": "ROP",
-    "MCO": "MCO",
     "PRY": "PRY.MI",
     "META": "META",
     "GOOGL": "GOOGL",
@@ -41,7 +49,16 @@ SYMBOLS = {
     "XEON": "XEON.DE",
     "ISAC": "ISAC.MI",
     "XDWH": "XDWH.DE",
-    "URNU": "URNU.MI", "KWBE": "KWBE.MI",
+    "URNU": "URNU.MI",
+    "KWBE": "KWBE.MI",
+    "005380": "005380.KS", "005385": "005385.KS", "SNPS": "SNPS", "COHR": "COHR",
+    # ADDED 21 Aug 2026 - board tickers that had NO live price. Every non-US line carries its
+    # SUFFIX: a bare ticker silently resolves to a US namesake or to nothing at all, which is exactly
+    # how ACOMO/CSU/VISA came to sit in this map with no price for weeks (fixed in the same pass:
+    # ACOMO->ACOMO.AS, CSU->CSU.TO, VISA->V). All eleven were verified against Yahoo before adding -
+    # correct instrument name AND a sane ratio to the baked price.
+    "8766": "8766.T", "KSPI": "KSPI", "LBTYA": "LBTYA", "MDLZ": "MDLZ",
+    "NXPI": "NXPI", "SPCX": "SPCX", "XOM": "XOM", "YSN": "YSN.DE",
     "FLXI": "FLXI.DE",
     "ABT": "ABT",
     "CMG": "CMG",
@@ -59,7 +76,8 @@ SYMBOLS = {
     "PDRDF": "PDRDF",
     "ESIS": "ESIS.DE",
     "DAPP": "DAPP.MI",
-    "CI2": "FLXI.DE",
+    # "CI2": UNMAPPED 31 Aug 2026. Mapped to FLXI.DE, which returns 35.80 against a board price of 911
+#   - 0.04x. Wrong instrument.
     "CPH": "CPH.TO",
     "CSBGE7": "CSBGE7.MI",
     "LEMA": "LEMA.MI",
@@ -69,24 +87,23 @@ SYMBOLS = {
     "MMM": "MMM",
     "ABBV": "ABBV",
     "ACN": "ACN",
-    "ACOMO": "ACOMO",
+    "ACOMO": "ACOMO.AS",
     "ADBE": "ADBE",
     "AD": "AD",
     "ABNB": "ABNB",
     "BABA": "BABA",
     "AMD": "AMD",
-    "AASI": "AASI",
+    "AASI": "AASI.MI",  # Amundi Index Solutions ETF, Milan - 0.95x stored
     "AAPL": "AAPL",
     "APP": "APP",
     "ADM": "ADM",
     "ARM": "ARM",
     "ASML": "ASML",
-    "1ASML": "1ASML",
+    "1ASML": "1ASML.MI",  # ASML on the Borsa Italiana Global Equity Market, the "1" prefix - 1.00x stored
     "B": "B",
-    "BRK.B": "BRK.B",
     "BLCO": "BLCO",
     "BHP": "BHP",
-    "RX": "RX",
+    "RX": "RX.V",
     "BA": "BA",
     "BKNG": "BKNG",
     "AVGO": "AVGO",
@@ -95,19 +112,19 @@ SYMBOLS = {
     "BC": "BC",
     "BZZUY": "BZZUY",
     "BYDDY": "BYDDY",
-    "CPR": "CPR",
-    "CAP": "CAP",
+    "CPR": "CPR.MI",
+    "CAP": "CAP.PA",
     "CPRI": "CPRI",
-    "1afx": "1afx",
+    "1afx": "AFX.DE",
     "CAVA": "CAVA",
     "CELH": "CELH",
-    "0001": "0001",
+    "0001": "0001.HK",
     "CLSK": "CLSK",
     "NET": "NET",
     "KO": "KO",
     "CL": "CL",
     "CFRUY": "CFRUY",
-    "CSU": "CSU",
+    "CSU": "CSU.TO",
     "CPRT": "CPRT",
     "CRWV": "CRWV",
     "CPNG": "CPNG",
@@ -118,16 +135,17 @@ SYMBOLS = {
     "DEO": "DEO",
     "DLO": "DLO",
     "DUOL": "DUOL",
-    "EDEN": "EDEN",
-    "ESL": "ESL",
-    "SX5E": "SX5E",
+    # "EDEN": UNMAPPED 31 Aug 2026. The bare ticker returns a US ETF at 117.33 against a board price of
+#   23.97 - 4.9x, so it is the wrong instrument. Left out rather than guessed.
+    "ESL": "EL.PA",
+    "SX5E": "^STOXX50E",  # EURO STOXX 50 index - 1.05x stored
     "ERFSF": "ERFSF",
-    "FIh.u": "FIh.u",
+    "FIh.u": "FIH-U.TO",  # Fairfax India Holdings, Toronto USD unit - 1.01x stored
     "FMX": "FMX",
     "RACE": "RACE",
-    "FBK": "FBK",
+    # "FBK": UNMAPPED 31 Aug 2026. FBK.MI is FinecoBank at about EUR 23.72 against a board price of
+#   61.34 - 0.39x, so the board row is NOT FinecoBank. Needs identifying before it is mapped.
     "FVRR": "FVRR",
-    "O3I": "O3I",
     "FMC": "FMC",
     "FTNT": "FTNT",
     "GRAB": "GRAB",
@@ -135,33 +153,34 @@ SYMBOLS = {
     "IDEXY": "IDEXY",
     "INFY": "INFY",
     "INTC": "INTC",
-    "IWB": "IWB",
+    "IWB": "IWB.MI",
     "JDSPY": "JDSPY",
     "JD": "JD",
     "JEDI": "JEDI",
     "JNJ": "JNJ",
     "JMIA": "JMIA",
-    "K": "K",
-    "KER": "KER",
-    "2222.0": "2222.0",
-    "KWEB": "KWEB",
+    "K": "K.TO",  # Kinross Gold, Toronto - 1.08x stored
+    "KER": "KER.PA",
+    "2222.0": "2222.T",     # KOTOBUKI, Tokyo. I mapped this to 2222.SR (Saudi Aramco) on 31 Aug and
+                        # the ratio check caught it instantly - Aramco quotes near SAR 26 against a
+                        # board price of 2,159. Wrong company, right-looking ticker.
     "LMND": "LMND",
-    "LDO": "LDO",
+    "LDO": "LDO.MI",
     "LVMHF": "LVMHF",
     "MOH": "MOH",
     "LYFT": "LYFT",
     "AMKBY": "AMKBY",
     "MKL": "MKL",
     "MAR": "MAR",
-    "MASI": "MASI",
+    "MASI": "MASI.MI",  # Masi Agricola SpA, Milan - 0.87x stored, accepted on an exact name match
     "MCD": "MCD",
     "Meli": "Meli",
-    "MONC": "MONC",
+    "MONC": "MONC.MI",
     "MNDY": "MNDY",
-    "NDX": "NDX",
-    "NESN": "NESN",
+    "NDX": "^NDX",
+    "NESN": "NESN.SW",
     "NEM": "NEM",
-    "NEXI": "NEXI",
+    "NEXI": "NEXI.MI",
     "NTDOY": "NTDOY",
     "NVO": "NVO",
     "NTNX": "NTNX",
@@ -169,16 +188,15 @@ SYMBOLS = {
     "OKLO": "OKLO",
     "OKTA": "OKTA",
     "ORCL": "ORCL",
-    "ORSTED": "ORSTED",
+    "ORSTED": "ORSTED.CO",
     "OSCR": "OSCR",
     "PLTR": "PLTR",
-    "2PP": "2PP",
     "PEP": "PEP",
     "PSH": "PSH",
     "PFE": "PFE",
-    "PQ": "PQ",
+    "PQ": "PQ.MI",
     "PG": "PG",
-    "PRX": "PRX",
+    "PRX": "PRX.AS",
     "PUBM": "PUBM",
     "RL": "RL",
     "RELY": "RELY",
@@ -188,19 +206,19 @@ SYMBOLS = {
     "RBSFY": "RBSFY",
     "RYAAY": "RYAAY",
     "VOO": "VOO",
-    ".INX": ".INX",
+    ".INX": "^GSPC",  # S&P 500 index - 1.02x stored
     "CRM": "CRM",
     "IOT": "IOT",
     "SMTI": "SMTI",
     "SAP": "SAP",
-    "SES": "SES",
+    "SES": "SES.TO",
     "SMH": "SMH",
     "NOW": "NOW",
     "SHOP": "SHOP",
-    "SIE": "SIE",
+    "SIE": "SIE.DE",
     "SNOW": "SNOW",
     "SBUX": "SBUX",
-    "STLAM": "STLAM",
+    "STLAM": "STLAM.MI",
     "STNE": "STNE",
     "SG": "SG",
     "TROW": "TROW",
@@ -217,13 +235,13 @@ SYMBOLS = {
     "UA": "UA",
     "UNH": "UNH",
     "GDX": "GDX",
-    "QNTM": "QNTM",
-    "VUAA": "VUAA",
+    # "QNTM": UNMAPPED 31 Aug 2026. Returns 3.17 against a board price of 29.35 - 0.11x.
+    "VUAA": "VUAA.MI",
     "VEEV": "VEEV",
     "V": "V",
-    "VISA": "VISA",
+    "VISA": "V",
     "VST": "VST",
-    "VOW3": "VOW3",
+    "VOW3": "VOW3.DE",
     "WBD": "WBD",
     "WM": "WM",
     "XOVR": "XOVR",
@@ -260,21 +278,36 @@ SYMBOLS = {
     "IBN": "IBN",
     "IBE": "IBE.MC",
     "GEV": "GEV",
-    # --- added 21 Aug 2026: eleven board tickers with NO live price. The last three are OVERRIDES -
-    # a later key wins in a dict literal - fixing bare tickers that resolved to nothing for weeks:
-    # ACOMO -> ACOMO.AS (Amsterdam), CSU -> CSU.TO (Toronto), VISA -> V. Standing rule: any non-US
-    # listing MUST carry its suffix or it silently grabs a US namesake, or nothing at all.
-    "8766": "8766.T",
-    "KSPI": "KSPI",
-    "LBTYA": "LBTYA",
-    "MDLZ": "MDLZ",
-    "NXPI": "NXPI",
-    "SPCX": "SPCX",
-    "XOM": "XOM",
-    "YSN": "YSN.DE",
-    "ACOMO": "ACOMO.AS",
-    "CSU": "CSU.TO",
-    "VISA": "V"
+    # --- added 17 Aug 2026. EVERY ONE resolved live against the board's stored price before
+    # committing: a bare ticker grabs the US namesake. FLOW bare = a USD NYSEArca ETF at $43.21
+    # (real: FLOW.AS, EUR27.64 Amsterdam). CNQ bare = the NYSE USD line at $49.27 against a
+    # C$55.17 level, which would have rendered a FALSE HIT — CNQ.TO is C$68.38 Toronto.
+    "FLOW": "FLOW.AS",
+    "LIN": "LIN",
+    "FNV": "FNV",
+    "CNQ": "CNQ.TO",
+    "HHH": "HHH",
+    "INTU": "INTU",
+    "SPGI": "SPGI",
+    "ROP": "ROP",
+    "MCO": "MCO",
+    # ===== ADDED 31 Aug 2026 - TEN GRADED NAMES THAT COULD NEVER REFRESH =====
+    # Each of these carried a quality score AND an intrinsic value while having no entry here at all,
+    # so its board price was frozen at whatever was last baked in. Aker BP was 18% stale and Moncler
+    # 15%, both sitting within a few points of clearing their gate - the distance to a buy level is
+    # only as good as the price under it. Every non-US line carries its SUFFIX, per the 21 Aug lesson:
+    # a bare ticker silently resolves to a US namesake or to nothing.
+    "8058": "8058.T",        # Mitsubishi Corp, Tokyo
+    "AKRBP": "AKRBP.OL",     # Aker BP, Oslo
+    "BMY": "BMY",
+    "ENR": "ENR.DE",         # SIEMENS ENERGY - the bare ENR is ENERGIZER in the US, the collision
+                             # that put Energizer's dividend on this row in the August sweep.
+    "GLOB": "GLOB",
+    "MBG.DE": "MBG.DE",      # Mercedes-Benz
+    "MOS": "MOS",
+    "NTR": "NTR",
+    "TPW": "TPW.AX",         # Temple & Webster, ASX - added to the board 31 Aug and never mapped
+    "WBD.MI": "WBD.MI",      # WEBUILD, Milan. NOT Warner Bros Discovery, which is WBD in the US.
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
@@ -282,12 +315,6 @@ INDICES = {
     "IDX_HSI": "%5EHSI",
     "IDX_NIFTY": "%5ENSEI",
     "IDX_BTC": "BTC-USD",
-    # added 21 Aug 2026. Both tiles ALREADY render on the dashboard (IDXMETA) but were absent here,
-    # so they ran on frozen idxSnap fallbacks - SMH showed 568.92 against a real 562.65 and LEMA
-    # 72.60 against 74.29. Close enough to look right, which is why it went unnoticed.
-    # IDX_ISAC is DELIBERATELY NOT ADDED: it was retired from the dashboard because ISAC.L is the
-    # LONDON USD line, and its FX-driven swings do not reflect the EUR holding. Same reason
-    # IDX_LEMA uses LEMA.MI (EUR/Milan = the line actually held), not a USD listing.
     "IDX_SMH": "SMH",
     "IDX_LEMA": "LEMA.MI",
 }
@@ -334,6 +361,9 @@ def _fetch_idx(ysym, host):
     # chartPreviousClose on a 1y-range chart is the close from ~1yr ago, NOT yesterday's
     # close -> using it for the daily % gives nonsense (e.g. "+23%" days). Derive the
     # real previous close from the daily closes series instead.
+    # Note: p is rounded to 4dp but closes[] are raw floats, so compare rounded values
+    # (a raw tolerance of 1e-6 was too tight and never matched, e.g. 7431.4599609375
+    # vs 7431.46 -> diff ~4e-5 -> always fell into the "else" branch, giving d≈0).
     pc = None
     if len(closes) >= 2:
         pc = closes[-2] if (p and abs(round(closes[-1], 4) - p) < 1e-6) else closes[-1]
@@ -356,21 +386,25 @@ try: prev = json.load(open("prices.json"))
 except Exception: prev = {}
 
 out = {}; fail = []
-for ticker, ysym in INDICES.items():
-    try:
-        out[ticker] = quote_idx(ysym)
-    except Exception:
-        fail.append(ticker)
-        if isinstance(prev.get(ticker), dict): out[ticker] = prev[ticker]
-    time.sleep(0.3)
 for ticker, ysym in SYMBOLS.items():
     try:
         out[ticker] = quote(ysym)
     except Exception:
+        if ticker in prev:
+            out[ticker] = prev[ticker]
         fail.append(ticker)
-        if isinstance(prev.get(ticker), dict): out[ticker] = prev[ticker]
-    time.sleep(0.3)
+
+for ticker, ysym in INDICES.items():
+    try:
+        out[ticker] = quote_idx(ysym)
+    except Exception:
+        if ticker in prev:
+            out[ticker] = prev[ticker]
+        fail.append(ticker)
 
 out["_updated"] = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime())
-json.dump(out, open("prices.json", "w"), indent=0)
-print(f"wrote prices.json: {len(out)-1} symbols, {len(fail)} failed -> {fail[:25]}")
+with open("prices.json", "w", encoding="utf-8") as fh:      # UTF-8, no BOM
+    json.dump(out, fh, ensure_ascii=False)
+
+print("wrote prices.json: %d ok, %d carried/failed (%s)" % (
+    len(out) - len(fail) - 1, len(fail), ", ".join(fail) if fail else "none"))
