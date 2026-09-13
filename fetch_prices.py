@@ -70,6 +70,7 @@ SYMBOLS = {
     "LEU": "LEU",
     "ALC": "ALC",
     "ABF": "ABF.L",
+    "WISE": "WISE.L",   # Wise Group plc, London line in GBp (what the dashboard values); primary listing moved to Nasdaq May 2026
     "HEIA": "HEIA.AS",
     "NMAN": "NMAN.ST",
     "HESAY": "HESAY",
