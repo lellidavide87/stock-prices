@@ -71,6 +71,11 @@ SYMBOLS = {
     "ALC": "ALC",
     "ABF": "ABF.L",
     "WISE": "WISE.L",   # Wise Group plc, London line in GBp (what the dashboard values); primary listing moved to Nasdaq May 2026
+    "CI2": "CI2.MI",  # Amundi MSCI India, Milan EUR (added 14 Sep 2026)
+    "DFNS": "DFNS.MI",  # VanEck Defense UCITS, Milan EUR
+    "QNTM": "QNTM.MI",  # VanEck Quantum Computing UCITS, Milan EUR
+    "GNOM.MI": "GNOM.MI",  # Global X Genomics & Biotech UCITS, Milan EUR
+    "EDAC.MI": "EDAC.MI",  # EdiliziAcrobatica, Milan EUR
     "HEIA": "HEIA.AS",
     "NMAN": "NMAN.ST",
     "HESAY": "HESAY",
@@ -157,7 +162,7 @@ SYMBOLS = {
     "IWB": "IWB.MI",
     "JDSPY": "JDSPY",
     "JD": "JD",
-    "JEDI": "JEDI",
+    "JEDI": "JEDI.MI",  # VanEck Space Innovators UCITS, Milan EUR - bare "JEDI" returned a different US security (14 Sep 2026)
     "JNJ": "JNJ",
     "JMIA": "JMIA",
     "K": "K.TO",  # Kinross Gold, Toronto - 1.08x stored
@@ -235,8 +240,8 @@ SYMBOLS = {
     "ULTA": "ULTA",
     "UA": "UA",
     "UNH": "UNH",
-    "GDX": "GDX",
-    # "QNTM": UNMAPPED 31 Aug 2026. Returns 3.17 against a board price of 29.35 - 0.11x.
+    "GDX": "GDX.MI",  # VanEck Gold Miners UCITS, Milan EUR - bare "GDX" is the US fund in USD (14 Sep 2026)
+    # "QNTM": was UNMAPPED 31 Aug 2026 (bare symbol returned 3.17); mapped to QNTM.MI on 14 Sep 2026 - see above.
     "VUAA": "VUAA.MI",
     "VEEV": "VEEV",
     "V": "V",
