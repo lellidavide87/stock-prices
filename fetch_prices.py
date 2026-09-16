@@ -98,7 +98,7 @@ SYMBOLS = {
     "ACN": "ACN",
     "ACOMO": "ACOMO.AS",
     "ADBE": "ADBE",
-    "AD": "AD",
+    "AD": "AD.AS",  # Ahold Delhaize Amsterdam EUR - bare AD is ARRAY DIGITAL INFRASTRUCTURE, a different company (16 Sep 2026)
     "ABNB": "ABNB",
     "BABA": "BABA",
     "AMD": "AMD",
@@ -107,7 +107,7 @@ SYMBOLS = {
     "APP": "APP",
     "ADM": "ADM",
     "ARM": "ARM",
-    "ASML": "ASML",
+    "ASML": "ASML.AS",  # ASML Amsterdam EUR - the model is in EUR; bare ASML is the US ADR in USD (16 Sep 2026)
     "1ASML": "1ASML.MI",  # ASML on the Borsa Italiana Global Equity Market, the "1" prefix - 1.00x stored
     "B": "B",
     "BLCO": "BLCO",
@@ -148,7 +148,7 @@ SYMBOLS = {
 #   23.97 - 4.9x, so it is the wrong instrument. Left out rather than guessed.
     "ESL": "EL.PA",
     "SX5E": "^STOXX50E",  # EURO STOXX 50 index - 1.05x stored
-    "ERFSF": "ERFSF",
+    "ERFSF": "ERF.PA",  # Eurofins Paris EUR - the model is in EUR; ERFSF is the US OTC line in USD (16 Sep 2026)
     "FIh.u": "FIH-U.TO",  # Fairfax India Holdings, Toronto USD unit - 1.01x stored
     "FMX": "FMX",
     "RACE": "RACE",
