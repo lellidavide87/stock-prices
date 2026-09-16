@@ -71,6 +71,7 @@ SYMBOLS = {
     "ALC": "ALC",
     "ABF": "ABF.L",
     "WISE": "WISE.L",   # Wise Group plc, London line in GBp (what the dashboard values); primary listing moved to Nasdaq May 2026
+    "LLY": "LLY",  # Eli Lilly, NYSE USD - added 16 Sep 2026 for the Novo comparison
     "FBK": "FBK.MI",  # FinecoBank, Milan EUR - mapped 14 Sep 2026; the 31 Aug mismatch was the BOARD price (61.34), now fixed to ~22.9
     "EDEN": "EDEN.PA",  # Edenred, Paris EUR - mapped 14 Sep 2026; board price corrected to ~28.7
     "CI2": "CI2.MI",  # Amundi MSCI India, Milan EUR (added 14 Sep 2026)
