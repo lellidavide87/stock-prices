@@ -71,6 +71,12 @@ SYMBOLS = {
     "ALC": "ALC",
     "ABF": "ABF.L",
     "WISE": "WISE.L",   # Wise Group plc, London line in GBp (what the dashboard values); primary listing moved to Nasdaq May 2026
+    # ADDED 17 Sep 2026 - 16 board rows that showed "no feed"; each verified on Yahoo (name, currency, ratio to board 0.87-1.04)
+    "0142": "0142.HK", "1999": "1999.HK", "FI": "FISV",   # Fiserv moved to Nasdaq as FISV; bare FI no longer resolves
+    "GLEN": "GLEN.L", "HLMA": "HLMA.L",                  # London lines in GBp
+    "FCT": "FCT.MI", "G.MI": "G.MI", "FRE.DE": "FRE.DE", "RI.PA": "RI.PA",
+    "TOI": "TOI.V", "LIFCO": "LIFCO-B.ST", "6471.T": "6471.T",
+    "IBM": "IBM", "PL": "PL", "IONQ": "IONQ", "AME": "AME",
     "LLY": "LLY",  # Eli Lilly, NYSE USD - added 16 Sep 2026 for the Novo comparison
     "FBK": "FBK.MI",  # FinecoBank, Milan EUR - mapped 14 Sep 2026; the 31 Aug mismatch was the BOARD price (61.34), now fixed to ~22.9
     "EDEN": "EDEN.PA",  # Edenred, Paris EUR - mapped 14 Sep 2026; board price corrected to ~28.7
