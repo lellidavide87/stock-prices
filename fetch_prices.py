@@ -332,6 +332,9 @@ INDICES = {
     "IDX_BTC": "BTC-USD",
     "IDX_SMH": "SMH",
     "IDX_LEMA": "LEMA.MI",
+    # ADDED 20 Sep 2026 (owner: "add isac etf to see how it is doing from high"). The MILAN EUR line, not the
+    # London USD one that was removed in August: a USD line shows FX moves as index drawdowns.
+    "IDX_ISAC": "ISAC.MI",
 }
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                          "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
