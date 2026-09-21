@@ -374,17 +374,30 @@ def _fetch_idx(ysym, host):
         res = json.load(r)["chart"]["result"][0]
     m = res["meta"]
     p = m.get("regularMarketPrice")
-    closes = [c for c in (res.get("indicators", {}).get("quote", [{}])[0].get("close") or []) if c]
+    raw = res.get("indicators", {}).get("quote", [{}])[0].get("close") or []
+    ts = res.get("timestamp") or []
+    pairs = [(t, c) for t, c in zip(ts, raw) if c]
+    closes = [c for _, c in pairs] or [c for c in raw if c]
     top = max(closes + ([p] if p else []))
+    # FIXED 21 Sep 2026 (owner: "the nasdaq daily % is not updated" - NDX and BTC read +0.00%).
+    # The price-match test below compares the last daily bar to regularMarketPrice at 1e-6, but
+    # regularMarketPrice arrives with fewer decimals than the bar (NDX 30482.352 vs 30482.3515625),
+    # so it never matched and TODAY'S bar was used as "yesterday" -> d = 0. Decide by TIME instead:
+    # if the last bar belongs to the current session, yesterday is the bar before it.
+    rmt = m.get("regularMarketTime")
+    if len(pairs) >= 2 and rmt and 0 <= rmt - pairs[-1][0] < 86400:
+        pc_time = pairs[-2][1]
+    else:
+        pc_time = None
     # chartPreviousClose on a 1y-range chart is the close from ~1yr ago, NOT yesterday's
     # close -> using it for the daily % gives nonsense (e.g. "+23%" days). Derive the
     # real previous close from the daily closes series instead.
     # Note: p is rounded to 4dp but closes[] are raw floats, so compare rounded values
     # (a raw tolerance of 1e-6 was too tight and never matched, e.g. 7431.4599609375
     # vs 7431.46 -> diff ~4e-5 -> always fell into the "else" branch, giving d≈0).
-    pc = None
-    if len(closes) >= 2:
-        pc = closes[-2] if (p and abs(round(closes[-1], 4) - p) < 1e-6) else closes[-1]
+    pc = pc_time
+    if pc is None and len(closes) >= 2:
+        pc = closes[-2] if (p and abs(closes[-1] - p) <= 1e-4 * p) else closes[-1]
     if pc is None:
         pc = m.get("chartPreviousClose") or m.get("previousClose")
     if not p or not pc or not top: raise ValueError("no idx data")
