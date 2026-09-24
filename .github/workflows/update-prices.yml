@@ -60,3 +60,54 @@ jobs:
             [ $i -lt 9 ] && sleep 150
           done
           exit 0
+
+      # ==================================================================================
+      # __SELFCHAIN__ 24 Sep 2026, owner instruction: "the self-dispatch with a market-hours guard".
+      #
+      # WHY. The loop above is reliable; the CRON THAT STARTS IT IS NOT. GitHub's scheduler is
+      # best-effort and drops most triggers on this repo - on 24 Sep the 13:23 AND 13:53 triggers both
+      # never fired, the last run having been created at 12:46. The feed therefore froze at 13:10 UTC,
+      # TWENTY MINUTES BEFORE THE US OPEN AT 13:30, so every US name on the dashboard showed yesterday's
+      # close AND yesterday's daily move for the whole session. That is the worst possible failure mode
+      # because it does not look broken - the numbers are all there, they are simply a day old. The
+      # 10 Sep fix (a second cron entry) reduced the odds without removing the dependency, and the same
+      # failure recurred two weeks later at almost the same point in the day.
+      #
+      # WHAT THIS DOES. Each run re-dispatches the workflow when it finishes, so after the FIRST
+      # trigger of the day the chain no longer depends on cron at all. A run covers ~25 minutes, so
+      # chaining gives continuous coverage. The cron entries stay as the way the chain STARTS (and as
+      # the fallback if a link ever breaks).
+      #
+      # THE GUARD, AND IT MATTERS. Without one this runs all night fetching prices nobody reads and
+      # buries the run history. It re-dispatches ONLY Monday-Friday and ONLY between 07:00 and 20:59
+      # UTC, which is the existing cron window: European open through the US afternoon. Outside that
+      # the chain stops by itself and the next morning's cron restarts it.
+      #
+      # AND IT WILL NOT PILE UP. If a run is already queued - because cron fired as well - this skips
+      # the dispatch rather than adding a second. Combined with `concurrency: cancel-in-progress:false`
+      # above, at most one run waits behind the live one.
+      #
+      # COST: none. lellidavide87/stock-prices is a PUBLIC repo, so Actions minutes are unmetered.
+      # TO STOP IT: disable the workflow in the Actions tab; the chain dies with the current run.
+      # ==================================================================================
+      - name: Re-dispatch (market hours only) - do not depend on GitHub's cron
+        if: always()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          DOW=$(date -u +%u)     # 1=Mon .. 7=Sun
+          HOUR=$(date -u +%H)
+          if [ "$DOW" -gt 5 ]; then
+            echo "weekend (UTC day $DOW) - chain stops here, Monday's cron restarts it"; exit 0
+          fi
+          if [ "$HOUR" -lt 07 ] || [ "$HOUR" -gt 20 ]; then
+            echo "outside 07:00-20:59 UTC (now ${HOUR}:00) - chain stops here, tomorrow's cron restarts it"; exit 0
+          fi
+          QUEUED=$(gh run list --workflow=update-prices.yml --status=queued --json databaseId --jq 'length' || echo 0)
+          if [ "${QUEUED:-0}" -gt 0 ]; then
+            echo "a run is already queued ($QUEUED) - not adding another"; exit 0
+          fi
+          echo "re-dispatching: UTC day $DOW, hour $HOUR, nothing queued"
+          gh workflow run update-prices.yml --ref main
