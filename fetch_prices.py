@@ -79,6 +79,10 @@ SYMBOLS = {
     "IBM": "IBM", "PL": "PL", "IONQ": "IONQ", "AME": "AME",
     "LLY": "LLY",  # Eli Lilly, NYSE USD - added 16 Sep 2026 for the Novo comparison
     "EXPE": "EXPE",  # Expedia Group, Nasdaq USD - added 24 Sep 2026 with the first deep model
+    "ENI": "ENI.MI",    # Eni, Milan EUR - added 24 Sep 2026 (RE-ADDED: the first push was reverted by the price-bot soft-reset bug)
+    "ENEL": "ENEL.MI",  # Enel, Milan EUR - added 24 Sep 2026 (RE-ADDED, same reason)
+    "XDWS": "XDWS.MI",  # Xtrackers MSCI World Consumer Staples, Milan EUR - ballast sleeve, 24 Sep 2026
+    "XDWU": "XDWU.MI",  # Xtrackers MSCI World Utilities, Milan EUR - ballast sleeve, 24 Sep 2026
     "FBK": "FBK.MI",  # FinecoBank, Milan EUR - mapped 14 Sep 2026; the 31 Aug mismatch was the BOARD price (61.34), now fixed to ~22.9
     "EDEN": "EDEN.PA",  # Edenred, Paris EUR - mapped 14 Sep 2026; board price corrected to ~28.7
     "CI2": "CI2.MI",  # Amundi MSCI India, Milan EUR (added 14 Sep 2026)

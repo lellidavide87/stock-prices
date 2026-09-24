@@ -49,11 +49,24 @@ jobs:
           for i in 1 2 3 4 5 6 7 8 9; do
             echo "=== iteration $i $(date -u) ==="
             python fetch_prices.py || { echo "fetch failed, retry next loop"; sleep 150; continue; }
-            git add prices.json
-            git commit -m "update prices" >/dev/null 2>&1 || echo "no changes"
+            # __ONLYPRICES__ 24 Sep 2026. THIS LOOP USED TO REVERT OTHER PEOPLE'S COMMITS. Its conflict
+            # fallback was `git reset --soft origin/main` + commit, and a SOFT reset keeps the runner's
+            # whole index - including the fetch_prices.py it checked out when the run STARTED. So any
+            # change pushed to the repo mid-run was silently undone by the next "update prices" commit.
+            # Proven on 24 Sep: commit 79f2248 (price-bot, 20:52:11 UTC) deleted the ENI and ENEL
+            # mappings pushed minutes earlier, while claiming only to update prices. The same path could
+            # have reverted this workflow file itself.
+            # NOW: keep the freshly fetched prices.json aside, HARD-reset to the latest main, put ONLY
+            # prices.json back, and commit that one file. A price commit can no longer touch anything
+            # else, and there is no rebase left to conflict. Bonus: after the reset the next iteration
+            # runs the LATEST fetch_prices.py, so a ticker added mid-run is picked up mid-run.
+            cp prices.json "$RUNNER_TEMP/prices.json"
             for a in 1 2 3 4; do
               git fetch origin main -q
-              git rebase origin/main -q || { git rebase --abort; git reset --soft origin/main; git add prices.json; git commit -m "update prices" >/dev/null 2>&1; }
+              git reset --hard origin/main -q
+              cp "$RUNNER_TEMP/prices.json" prices.json
+              git add prices.json
+              if ! git commit -m "update prices" >/dev/null 2>&1; then echo "no changes"; break; fi
               git push origin HEAD:main -q && break
               echo "push race, retry $a"; sleep $((RANDOM % 5 + 2))
             done
