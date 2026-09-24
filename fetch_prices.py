@@ -78,6 +78,7 @@ SYMBOLS = {
     "TOI": "TOI.V", "LIFCO": "LIFCO-B.ST", "6471.T": "6471.T",
     "IBM": "IBM", "PL": "PL", "IONQ": "IONQ", "AME": "AME",
     "LLY": "LLY",  # Eli Lilly, NYSE USD - added 16 Sep 2026 for the Novo comparison
+    "EXPE": "EXPE",  # Expedia Group, Nasdaq USD - added 24 Sep 2026 with the first deep model
     "FBK": "FBK.MI",  # FinecoBank, Milan EUR - mapped 14 Sep 2026; the 31 Aug mismatch was the BOARD price (61.34), now fixed to ~22.9
     "EDEN": "EDEN.PA",  # Edenred, Paris EUR - mapped 14 Sep 2026; board price corrected to ~28.7
     "CI2": "CI2.MI",  # Amundi MSCI India, Milan EUR (added 14 Sep 2026)
