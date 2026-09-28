@@ -329,6 +329,12 @@ SYMBOLS = {
     "NTR": "NTR",
     "TPW": "TPW.AX",         # Temple & Webster, ASX - added to the board 31 Aug and never mapped
     "WBD.MI": "WBD.MI",      # WEBUILD, Milan. NOT Warner Bros Discovery, which is WBD in the US.
+    # Unrivaled Investing (Daniel) portfolio tracker - added 28 Sep 2026 so the board can flag when a name reaches HIS cost basis
+    "IAU": "IAU",            # iShares Gold Trust, NYSE Arca USD
+    "SRBK": "SRBK",          # SR Bancorp, Nasdaq USD
+    "FNMA": "FNMA",          # Fannie Mae, OTC USD
+    "FRFHF": "FRFHF",        # Fairfax Financial, US OTC line in USD (the board holds the Toronto line, FFH)
+    "ADYEY": "ADYEY",        # Adyen ADR, OTC USD (1 ADR = 1/100 share)
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
