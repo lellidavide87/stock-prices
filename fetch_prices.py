@@ -335,6 +335,7 @@ SYMBOLS = {
     "FNMA": "FNMA",          # Fannie Mae, OTC USD
     "FRFHF": "FRFHF",        # Fairfax Financial, US OTC line in USD (the board holds the Toronto line, FFH)
     "ADYEY": "ADYEY",        # Adyen ADR, OTC USD (1 ADR = 1/100 share)
+    "MDB": "MDB",            # MongoDB, Nasdaq USD - added 28 Sep 2026 (deep model)
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
