@@ -2,6 +2,11 @@ name: Update stock prices
 
 on:
   workflow_dispatch:
+  # __SLEEPER__ 28 Sep 2026: a push that changes THIS file starts a run at once, so a fix to the feed restarts it
+  # without anyone pressing Run workflow.
+  push:
+    branches: [main]
+    paths: ['.github/workflows/update-prices.yml']
   schedule:
     # CRON FIXED 10 Sep 2026. The single hourly entry at minute :07 was being DROPPED by GitHub:
     # on 10 Sep it produced ONE burst all day (12:12-13:00 UTC) against ~15 scheduled triggers, and
@@ -27,7 +32,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 70
+    timeout-minutes: 330    # __SLEEPER__ an off-hours run sleeps up to 5h before handing over
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,7 +45,51 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         continue-on-error: true
+      # ==================================================================================
+      # __SLEEPER__ 28 Sep 2026 - owner: "prices are not updating ... the stocks are not live".
+      # WHAT FAILED: the chain above stopped by design on Friday night and waited for Monday's CRON to
+      # restart it. GitHub fired NONE of Monday's scheduled triggers (07:23 to 13:23 UTC, and the :53
+      # entries) - no run at all from Fri 23:38 to Mon 13:40 UTC, workflow active, Actions reported
+      # operational. So the whole board showed Friday's close on Monday, the same silent failure mode as
+      # 10 and 24 Sep, now at the weekend boundary.
+      # THE FIX: the chain NEVER hands control back to cron. Outside the trading window a run does not
+      # fetch - it SLEEPS until the window opens (at most 5 hours per run) and then dispatches the next
+      # run. Over a weekend that is ~13 short-lived sleeper runs; on a PUBLIC repo Actions minutes are
+      # unmetered, so the cost is nil. The cron entries remain only as a spare starter.
+      # ==================================================================================
+      - name: Trading window?
+        id: gate
+        shell: bash
+        run: |
+          DOW=$(date -u +%u); HOUR=$((10#$(date -u +%H)))
+          if [ "$DOW" -le 5 ] && [ "$HOUR" -ge 7 ] && [ "$HOUR" -le 20 ]; then
+            echo "open=true" >> "$GITHUB_OUTPUT"; echo "inside the window (day $DOW, hour $HOUR)"
+          else
+            echo "open=false" >> "$GITHUB_OUTPUT"; echo "outside the window (day $DOW, hour $HOUR)"
+          fi
+      - name: Off-hours sleeper - wait for the window, then hand over
+        if: steps.gate.outputs.open == 'false'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          NOW=$(date -u +%s); DOW=$(date -u +%u)
+          T7=$(date -u -d "$(date -u +%F) 07:00" +%s)
+          if [ "$DOW" -le 5 ] && [ "$NOW" -lt "$T7" ]; then NXT=$T7
+          else
+            # pure epoch arithmetic: "DATE 07:00 +1 day" is parsed by GNU date as a +01:00 TIME ZONE, not a day
+            NXT=$((T7 + 86400))
+            for d in 1 2 3 4 5 6 7; do C=$((T7 + d * 86400)); if [ "$(date -u -d "@$C" +%u)" -le 5 ]; then NXT=$C; break; fi; done
+          fi
+          W=$((NXT - NOW)); [ "$W" -gt 18000 ] && W=18000; [ "$W" -lt 60 ] && W=60
+          echo "window opens $(date -u -d "@$NXT"); sleeping ${W}s, then handing over"
+          sleep "$W"
+          QUEUED=$(gh run list --workflow=update-prices.yml --status=queued --json databaseId --jq 'length' || echo 0)
+          if [ "${QUEUED:-0}" -gt 0 ]; then echo "a run is already queued - not adding another"; exit 0; fi
+          gh workflow run update-prices.yml --ref main
       - name: Fetch & commit loop (every ~6 min for the hour)
+        if: steps.gate.outputs.open == 'true'
         shell: bash
         run: |
           set +e
@@ -104,7 +153,7 @@ jobs:
       # TO STOP IT: disable the workflow in the Actions tab; the chain dies with the current run.
       # ==================================================================================
       - name: Re-dispatch (market hours only) - do not depend on GitHub's cron
-        if: always()
+        if: always() && steps.gate.outputs.open == 'true'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
