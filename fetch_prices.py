@@ -84,6 +84,8 @@ SYMBOLS = {
     "XDWS": "XDWS.MI",  # Xtrackers MSCI World Consumer Staples, Milan EUR - ballast sleeve, 24 Sep 2026
     "XDWU": "XDWU.MI",  # Xtrackers MSCI World Utilities, Milan EUR - ballast sleeve, 24 Sep 2026
     "RGTI": "RGTI",  # Rigetti Computing, Nasdaq USD - added 25 Sep 2026 (systematic model, tier D, lottery-only)
+    "IG": "IG.MI",     # Italgas, Milan EUR - added 29 Sep 2026 with the first deep model
+    "TTE": "TTE.PA",   # TotalEnergies, PARIS EUR - added 29 Sep 2026. NOT the NYSE 'TTE' (the USD listing): the board row is in EUR
     "FBK": "FBK.MI",  # FinecoBank, Milan EUR - mapped 14 Sep 2026; the 31 Aug mismatch was the BOARD price (61.34), now fixed to ~22.9
     "EDEN": "EDEN.PA",  # Edenred, Paris EUR - mapped 14 Sep 2026; board price corrected to ~28.7
     "CI2": "CI2.MI",  # Amundi MSCI India, Milan EUR (added 14 Sep 2026)
