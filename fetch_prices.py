@@ -340,6 +340,7 @@ SYMBOLS = {
     "MDB": "MDB",            # MongoDB, Nasdaq USD - added 28 Sep 2026 (deep model)
     "HD": "HD",              # Home Depot, NYSE USD - added 29 Sep 2026 (deep model)
     "LOW": "LOW",            # Lowe's, NYSE USD - added 29 Sep 2026 (deep model)
+    "SNDK": "SNDK",          # Sandisk Corp, Nasdaq USD - added 1 Oct 2026 (deep model); resolved live at $1,739.89 before committing
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
