@@ -341,6 +341,8 @@ SYMBOLS = {
     "HD": "HD",              # Home Depot, NYSE USD - added 29 Sep 2026 (deep model)
     "LOW": "LOW",            # Lowe's, NYSE USD - added 29 Sep 2026 (deep model)
     "SNDK": "SNDK",          # Sandisk Corp, Nasdaq USD - added 1 Oct 2026 (deep model); resolved live at $1,739.89 before committing
+    "NKT": "NKT.CO",         # NKT A/S, Copenhagen DKK - added 4 Oct 2026 (Prysmian competitor); resolved live at DKK 893.00
+    "NEX": "NEX.PA",         # Nexans, Euronext Paris EUR - added 4 Oct 2026 (Prysmian competitor); resolved live at EUR 136.40
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
