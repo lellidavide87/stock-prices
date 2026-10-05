@@ -343,6 +343,7 @@ SYMBOLS = {
     "SNDK": "SNDK",          # Sandisk Corp, Nasdaq USD - added 1 Oct 2026 (deep model); resolved live at $1,739.89 before committing
     "NKT": "NKT.CO",         # NKT A/S, Copenhagen DKK - added 4 Oct 2026 (Prysmian competitor); resolved live at DKK 893.00
     "NEX": "NEX.PA",         # Nexans, Euronext Paris EUR - added 4 Oct 2026 (Prysmian competitor); resolved live at EUR 136.40
+    "RMS": "RMS.PA",         # Hermes, Euronext Paris EUR - HELD from 5 Oct 2026 (9 sh); resolved live at EUR 1,269.25
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
