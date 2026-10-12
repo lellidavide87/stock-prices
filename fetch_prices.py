@@ -229,6 +229,8 @@ SYMBOLS = {
     "RBSFY": "RBSFY",
     "RYAAY": "RYAAY",
     "SFM": "SFM",
+    "ZTS": "ZTS",
+    "OTIS": "OTIS",
     "VOO": "VOO",
     ".INX": "^GSPC",  # S&P 500 index - 1.02x stored
     "CRM": "CRM",
