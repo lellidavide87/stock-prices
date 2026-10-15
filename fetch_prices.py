@@ -39,6 +39,8 @@ SYMBOLS = {
     "NKE": "NKE",
     "DIS": "DIS",
     "PYPL": "PYPL",
+    "FICO": "FICO",
+    "LEN": "LEN",
     "FOUR": "FOUR",
     "XYZ": "XYZ",
     "BRK/B": "BRK-B",
