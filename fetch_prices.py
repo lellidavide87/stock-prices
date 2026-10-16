@@ -41,6 +41,7 @@ SYMBOLS = {
     "PYPL": "PYPL",
     "FICO": "FICO",
     "LEN": "LEN",
+    "BSP": "BSP",
     "FOUR": "FOUR",
     "XYZ": "XYZ",
     "BRK/B": "BRK-B",
