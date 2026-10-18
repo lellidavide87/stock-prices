@@ -42,6 +42,7 @@ SYMBOLS = {
     "FICO": "FICO",
     "LEN": "LEN",
     "BSP": "BSP",
+    "CDNS": "CDNS",
     "FOUR": "FOUR",
     "XYZ": "XYZ",
     "BRK/B": "BRK-B",
