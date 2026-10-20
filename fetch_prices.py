@@ -43,6 +43,7 @@ SYMBOLS = {
     "LEN": "LEN",
     "BSP": "BSP",
     "CDNS": "CDNS",
+    "012450": "012450.KS",
     "FOUR": "FOUR",
     "XYZ": "XYZ",
     "BRK/B": "BRK-B",
