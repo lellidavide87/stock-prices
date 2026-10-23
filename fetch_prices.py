@@ -246,6 +246,7 @@ SYMBOLS = {
     "SAP": "SAP",
     "SES": "SES.TO",
     "SMH": "SMH",
+    "VVSM": "VVSM.DE",       # VanEck Semiconductor UCITS ETF, Xetra EUR - the line the owner buys (ladder from 23 Oct 2026)
     "NOW": "NOW",
     "SHOP": "SHOP",
     "SIE": "SIE.DE",
