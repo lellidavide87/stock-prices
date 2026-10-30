@@ -181,6 +181,7 @@ SYMBOLS = {
     "IDEXY": "IDEXY",
     "INFY": "INFY",
     "INTC": "INTC",
+    "QCOM": "QCOM",          # Qualcomm - deep dive 30 Oct 2026, watch only
     "IWB": "IWB.MI",
     "JDSPY": "JDSPY",
     "JD": "JD",
