@@ -359,6 +359,7 @@ SYMBOLS = {
     "21BC": "21BC.DE",       # 21Shares Bitcoin Core ETP, Xetra EUR - HELD from 5 Oct 2026; resolved live at EUR 18.318
     "ETHC": "ETHC.DE",       # 21Shares Ethereum Core Staking ETP, Xetra EUR - buying Oct 2026; resolved live at EUR 9.023
     "AIR": "AIR.PA",         # Airbus, Euronext Paris EUR - added 2 Nov 2026 (deep dive); resolved live at EUR 196.08
+    "SAF": "SAF.PA",         # Safran, Euronext Paris EUR - added 2 Nov 2026 (deep dive); resolved live at EUR 288.20
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
