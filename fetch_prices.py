@@ -363,6 +363,14 @@ SYMBOLS = {
     "RR": "RR.L",            # Rolls-Royce Holdings, London GBp - added 3 Nov 2026 (deep dive); resolved at 1,276.20p
     "MTX": "MTX.DE",         # MTU Aero Engines, Xetra EUR - added 3 Nov 2026 (deep dive); resolved at EUR 345.80
     "GE": "GE",              # GE Aerospace, NYSE USD - added 3 Nov 2026 (deep dive); resolved at $317.89
+    "CSG": "CSG.AS",   # CSG N.V., Amsterdam EUR - Rheinmetall peer, added 3 Nov 2026
+    "GD": "GD",   # General Dynamics, NYSE USD - Rheinmetall peer, added 3 Nov 2026
+    "HAG": "HAG.DE",   # Hensoldt, Xetra EUR - Rheinmetall peer, added 3 Nov 2026
+    "R3NK": "R3NK.DE",   # RENK Group, Xetra EUR - Rheinmetall peer, added 3 Nov 2026
+    "KOG": "KOG.OL",   # Kongsberg Gruppen, Oslo NOK - Rheinmetall peer, added 3 Nov 2026
+    "SAAB": "SAAB-B.ST",   # Saab B, Stockholm SEK - Rheinmetall peer, added 3 Nov 2026
+    "HO": "HO.PA",   # Thales, Paris EUR - Rheinmetall peer, added 3 Nov 2026
+    "BAE": "BA.L",   # BAE Systems, London GBp - Rheinmetall peer, added 3 Nov 2026
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
