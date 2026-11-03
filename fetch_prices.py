@@ -362,6 +362,7 @@ SYMBOLS = {
     "SAF": "SAF.PA",         # Safran, Euronext Paris EUR - added 2 Nov 2026 (deep dive); resolved live at EUR 288.20
     "RR": "RR.L",            # Rolls-Royce Holdings, London GBp - added 3 Nov 2026 (deep dive); resolved at 1,276.20p
     "MTX": "MTX.DE",         # MTU Aero Engines, Xetra EUR - added 3 Nov 2026 (deep dive); resolved at EUR 345.80
+    "GE": "GE",              # GE Aerospace, NYSE USD - added 3 Nov 2026 (deep dive); resolved at $317.89
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
