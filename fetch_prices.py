@@ -360,6 +360,7 @@ SYMBOLS = {
     "ETHC": "ETHC.DE",       # 21Shares Ethereum Core Staking ETP, Xetra EUR - buying Oct 2026; resolved live at EUR 9.023
     "AIR": "AIR.PA",         # Airbus, Euronext Paris EUR - added 2 Nov 2026 (deep dive); resolved live at EUR 196.08
     "SAF": "SAF.PA",         # Safran, Euronext Paris EUR - added 2 Nov 2026 (deep dive); resolved live at EUR 288.20
+    "RR": "RR.L",            # Rolls-Royce Holdings, London GBp - added 3 Nov 2026 (deep dive); resolved at 1,276.20p
 }
 INDICES = {
     "IDX_SPX": "%5EGSPC",
