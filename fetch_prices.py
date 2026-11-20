@@ -338,6 +338,7 @@ SYMBOLS = {
     "ENR": "ENR.DE",         # SIEMENS ENERGY - the bare ENR is ENERGIZER in the US, the collision
                              # that put Energizer's dividend on this row in the August sweep.
     "GLOB": "GLOB",
+    "ANT": "ANT",  # Anthropic, PBC (Nasdaq, USD) - IPO 19 Nov 2026; Yahoo verified 20 Nov
     "MBG.DE": "MBG.DE",      # Mercedes-Benz
     "MOS": "MOS",
     "NTR": "NTR",
