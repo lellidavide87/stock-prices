@@ -316,6 +316,7 @@ SYMBOLS = {
     # --- added 28 Nov 2026 (power/grid watch rows): US primary listings, each resolved live on Yahoo 27 Nov
     # (PWR $580.60, ETN $325.92, NEE $84.95, CEG $238.10) - no namesake collision.
     "PWR": "PWR", "ETN": "ETN", "NEE": "NEE", "CEG": "CEG",
+    "DRI": "DRI",   # Darden Restaurants (NYSE), resolved live on Yahoo 28 Nov 2026 at $243.26 - no namesake collision
     # --- added 17 Aug 2026. EVERY ONE resolved live against the board's stored price before
     # committing: a bare ticker grabs the US namesake. FLOW bare = a USD NYSEArca ETF at $43.21
     # (real: FLOW.AS, EUR27.64 Amsterdam). CNQ bare = the NYSE USD line at $49.27 against a
